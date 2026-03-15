@@ -1,0 +1,3 @@
+https://www.geeksforgeeks.org/python/python-word-embedding-using-word2vec/
+
+https://www.tensorflow.org/text/tutorials/word2vec
