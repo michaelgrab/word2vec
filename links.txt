@@ -23,6 +23,9 @@ https://github.com/ivanyschen/notes/blob/master/softmax_gradient.pdf
 Skip-Gram Negative Sampling Theory
 https://medium.com/@tnodecode/word2vec-negative-sampling-63995b13464f
 
+Logistic and Softmax Regression
+https://medium.com/@akshat.dev/understanding-logistic-and-softmax-regression-with-numpy-concepts-and-implementation-from-scratch-7e30a550b54c
+
 What I need is data preparation
 
 The datasets

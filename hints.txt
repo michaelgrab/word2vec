@@ -25,6 +25,12 @@ the context words -> the word given
 Input is the center word
 
 Input Layer: [Vx1]
+Weights: [VxN]
+Hidden Layer: [Nx1]
+Weights: [NxV]
+Output layer: [CxV]
 
+
+logits - the raw, unscaled output values from the final layer of a neural network
 
 The neural network has softmax output layer that has probabilities of every word in the vocabulary.
