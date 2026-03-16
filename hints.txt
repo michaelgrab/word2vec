@@ -1,16 +1,30 @@
 nltk.tokenize.sent_tokenize
 nltk.tokenize.word_tokenize
-
-In skip-gram the input is the center word and the predictions are the context words within a certain range before and after the current word.
+nltk.corpus.stopwords
 
 skip gram:
 the word itself -> the context words
+
+In skip-gram the input is the center word and the predictions are the context words within a certain range before and after the current word.
+
+skip gram tries to learn the context words
+
+window size
+how many nearby words are going to be considered
+
+v - vocabulary size
+this is the total number of unique words in the text corpus
 
 Continuous bag-of-words model: predicts the middle word based on surrounding context words. The context consists of a few words before and after the current (middle) word. This architecture is called a bag-of-words model as the order of words in the context is not important
 
 bag of words:
 the context words -> the word given
 
+# The Network Structure
+
+Input is the center word
+
+Input Layer: [Vx1]
 
 
 The neural network has softmax output layer that has probabilities of every word in the vocabulary.
