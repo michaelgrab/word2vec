@@ -8,6 +8,9 @@ import random
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english')) 
 
+# if set to True, the one hot encodings will contain multiple 1's
+# otherwise it will be usual single 1 per vector
+MULTI_ONE_VEC = True
 
 def get_file_data(stop_word_removal='no', filepath='dataset/jef_archer.txt'):
     file_contents = []
@@ -94,6 +97,7 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
     training_data =  []
     training_sample_words =  []
     for i,word in enumerate(corpus):
+        print(f"loading word {i}")
 
         index_target_word = i
         target_word = word
@@ -127,11 +131,13 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
                 if x < len(corpus):
                     context_words.extend([corpus[x]])
 
-
-        # trgt_word_vector,ctxt_word_vector = get_one_hot_vectors(target_word,context_words,vocab_size,word_to_index)
-        samples = generate_samples(trgt_word=target_word,
-            cxt_word=context_words, vocab_size=vocab_size, word_to_index=word_to_index)
-        training_data.extend(samples)   
+        if MULTI_ONE_VEC:
+            samples = generate_samples(trgt_word=target_word,
+                cxt_word=context_words, vocab_size=vocab_size, word_to_index=word_to_index)
+            training_data.extend(samples)   
+        else:
+            trgt_word_vector,ctxt_word_vector = get_one_hot_vectors(target_word,context_words,vocab_size,word_to_index)
+            training_data.append(sample)
         
         if sample is not None:
             training_sample_words.append([target_word,context_words])   
@@ -151,9 +157,9 @@ def get_cxt_word_columns(cxt_word_vector: np.ndarray):
 
 
 if(__name__ == "__main__"):
-    text = ['Best way to success is through hardwork and persistence']
+    # text = ['Best way to success is through hardwork and persistence']
     # text = get_file_data(stop_word_removal='yes', filepath='dataset/shakespeare.txt')
-    # text = get_file_data(stop_word_removal='yes')
+    text = get_file_data(stop_word_removal='yes')
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     print('Number of unique words:' , vocab_size)
     print('index_to_word : ', random.sample(  list( word_to_index.items() ), 3) )

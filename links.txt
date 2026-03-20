@@ -29,3 +29,17 @@ https://medium.com/@akshat.dev/understanding-logistic-and-softmax-regression-wit
 The datasets
 jef_archer.txt
 https://github.com/rahul1728jha/Word2Vec_Implementation/blob/master/jef_archer.txt
+
+Softmax regression
+http://ufldl.stanford.edu/tutorial/supervised/SoftmaxRegression/
+
+https://medium.com/@arjunprakash027/building-softmax-regression-from-scratch-a-hands-on-guide-with-python-code-5615166c9d4c
+
+Skip gram mathematical derivation
+https://mccormickml.com/assets/word2vec/Alex_Minnaar_Word2Vec_Tutorial_Part_I_The_Skip-Gram_Model.pdf
+
+negative sampling
+https://www.geeksforgeeks.org/nlp/negaitve-sampling-using-word2vec/
+
+CURRENTLY READING
+https://medium.com/data-science/a-word2vec-implementation-using-numpy-and-python-d256cf0e5f28
