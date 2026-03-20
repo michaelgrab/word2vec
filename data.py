@@ -120,6 +120,18 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
         
     return training_data,training_sample_words
 
+def get_cxt_word_columns(cxt_word_vector: np.ndarray):
+    columns = []
+    vocab_size = len(cxt_word_vector)
+    for i in range(vocab_size):
+        if cxt_word_vector[i] == 0:
+            continue
+        v = np.zeros_like(cxt_word_vector)
+        v[i] = 1
+        columns.append(v)
+    return columns    
+
+
 if(__name__ == "__main__"):
     text = ['Best way to success is through hardwork and persistence']
     # text = get_file_data(stop_word_removal='yes', filepath='dataset/shakespeare.txt')
@@ -135,12 +147,15 @@ if(__name__ == "__main__"):
     window_size = 2
     training_data,training_sample_words = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'yes')
 
-    for i in range( 3 ):
-        print('*' * 50)
-        print('Target word:%s . Target vector: %s ' %(training_sample_words[i][0],training_data[i][0]))
-        print('Context word:%s . Context  vector: %s ' %(training_sample_words[i][1],training_data[i][1]))
+    # for i in range( 3 ):
+    #     print('*' * 50)
+    #     print('Target word: %s . Target vector: %s ' %(training_sample_words[i][0],training_data[i][0]))
+    #     print('Context word:%s . Context  vector: %s ' %(training_sample_words[i][1],training_data[i][1]))
 
-    print(type(training_data[0][0]))
-    print(training_data[0][0].shape)
+    print('Target word: %s . Target vector: %s ' %(training_sample_words[0][0],training_data[0][0]))
+    print('Context word:%s . Context  vector: %s ' %(training_sample_words[0][1],training_data[0][1]))
 
-    
+    print("one hot encodings for every column")
+    columns = get_cxt_word_columns(training_data[0][1])
+    for column in columns:
+        print(column)    

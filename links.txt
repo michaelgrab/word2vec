@@ -12,6 +12,7 @@ https://medium.com/data-science/a-word2vec-implementation-using-numpy-and-python
 https://github.com/rahul1728jha/Word2Vec_Implementation/blob/master/Word_2_Vec.ipynb
 
 Code and diagrams
+CURRENTLY READING
 https://nry.me/posts/2018-03-22/word2vec-from-scratch-with-python-and-numpy/
 
 Word2Vec illustrated
@@ -26,7 +27,8 @@ https://medium.com/@tnodecode/word2vec-negative-sampling-63995b13464f
 Logistic and Softmax Regression
 https://medium.com/@akshat.dev/understanding-logistic-and-softmax-regression-with-numpy-concepts-and-implementation-from-scratch-7e30a550b54c
 
-What I need is data preparation
+1. Data preparation
+2. Loss function
 
 The datasets
 jef_archer.txt

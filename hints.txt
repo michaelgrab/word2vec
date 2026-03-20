@@ -34,3 +34,7 @@ Output layer: [CxV]
 logits - the raw, unscaled output values from the final layer of a neural network
 
 The neural network has softmax output layer that has probabilities of every word in the vocabulary.
+
+[1, 0, 1, 0, 0] --->
+[1, 0, 0, 0, 0],
+[0, 0, 1, 0, 0],
