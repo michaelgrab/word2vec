@@ -28,7 +28,7 @@ def get_file_data(stop_word_removal='no', filepath='dataset/jef_archer.txt'):
         text.append(line)
     return text
 
-def generate_dictinoary_data(text):
+def generate_dictionary_data(text):
     word_to_index= dict()
     index_to_word = dict()
     corpus = []
@@ -71,6 +71,22 @@ def get_one_hot_vectors(target_word,context_words,vocab_size,word_to_index):
         
     return trgt_word_vector,ctxt_word_vector
 
+def one_hot_vector(word, vocab_size, word_to_index):
+    word_vec = np.zeros(vocab_size)
+    index = word_to_index.get(word)
+    word_vec[index] = 1
+    return word_vec
+
+def generate_samples(trgt_word, cxt_word, vocab_size, word_to_index):
+    trgt_one_hot = one_hot_vector(trgt_word, vocab_size, word_to_index) 
+    samples = []
+    for c_w in cxt_word:
+        cxt_word_one_hot = one_hot_vector(c_w, vocab_size, word_to_index)
+        sample = trgt_one_hot, cxt_word_one_hot
+        samples.append(sample)
+    return samples    
+
+
 #Note : Below comments for trgt_word_index, ctxt_word_index are with the above sample text for understanding the code flow
 
 def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,sample=None):
@@ -112,8 +128,10 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
                     context_words.extend([corpus[x]])
 
 
-        trgt_word_vector,ctxt_word_vector = get_one_hot_vectors(target_word,context_words,vocab_size,word_to_index)
-        training_data.append([trgt_word_vector,ctxt_word_vector])   
+        # trgt_word_vector,ctxt_word_vector = get_one_hot_vectors(target_word,context_words,vocab_size,word_to_index)
+        samples = generate_samples(trgt_word=target_word,
+            cxt_word=context_words, vocab_size=vocab_size, word_to_index=word_to_index)
+        training_data.extend(samples)   
         
         if sample is not None:
             training_sample_words.append([target_word,context_words])   
@@ -136,7 +154,7 @@ if(__name__ == "__main__"):
     text = ['Best way to success is through hardwork and persistence']
     # text = get_file_data(stop_word_removal='yes', filepath='dataset/shakespeare.txt')
     # text = get_file_data(stop_word_removal='yes')
-    word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictinoary_data(text)
+    word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     print('Number of unique words:' , vocab_size)
     print('index_to_word : ', random.sample(  list( word_to_index.items() ), 3) )
     # print('word_to_index : ',word_to_index)
