@@ -48,6 +48,7 @@ class SkipGramNegativeSampling:
         self.neg_sample_num = neg_sample_num  
         self.learning_rate = learning_rate
         self.alpha = alpha
+        self.hidden_size = hidden_size
 
     def forward(self, x):
         """
@@ -59,7 +60,7 @@ class SkipGramNegativeSampling:
         return c_output, h
     
     def sigmoid(self, x):
-        pass
+        return 1 + (1 + np.exp(-x))
 
     def get_unigram_dist(self, occurrences, corpus_length):
         vocab_size = len(occurrences)
@@ -79,52 +80,34 @@ class SkipGramNegativeSampling:
     def sample_neg(self, dist):
         samples = np.random.choice( len(dist), size=self.neg_sample_num, p=dist, replace=False )
         return samples
-                  
-#---------------------------------
-# added for reference
-def calculate_error(y_pred,context_words):
     
-    total_error = [None] * len(y_pred)
-    index_of_1_in_context_words = {}
-    
-    for index in np.where(context_words == 1)[0]:
-        index_of_1_in_context_words.update ( {index : 'yes'} )
-        
-    number_of_1_in_context_vector = len(index_of_1_in_context_words)
-    
-    for i,value in enumerate(y_pred):
-        
-        if index_of_1_in_context_words.get(i) != None:
-            total_error[i]= (value-1) + ( (number_of_1_in_context_vector -1) * value)
-        else:
-            total_error[i]= (number_of_1_in_context_vector * value)
-            
-            
-    return  np.array(total_error)
+    def backwards(self, logits, neg_ind, h, cxt):
+        t = np.zeros(self.neg_sample_num + 1)
+        t[0] = 1
+        logits_pos = np.dot(logits, cxt)
+        logits_neg = logits[neg_ind]
+        logits_out = np.concatenate((logits_pos, logits_neg))
 
-def backward_prop(weight_inp_hidden,weight_hidden_output,total_error, hidden_layer, target_word_vector,learning_rate):
-    
-    dl_weight_inp_hidden = np.outer(target_word_vector, np.dot(weight_hidden_output, total_error.T))
-    dl_weight_hidden_output = np.outer(hidden_layer, total_error)
-    
-    # Update weights
-    weight_inp_hidden = weight_inp_hidden - (learning_rate * dl_weight_inp_hidden)
-    weight_hidden_output = weight_hidden_output - (learning_rate * dl_weight_hidden_output)
-    
-    return weight_inp_hidden,weight_hidden_output
+        row_pos = np.dot(cxt, self.v_output)
+        row_neg = self.v_output[:][neg_ind]
+        rows = np.concatenate((row_pos, row_neg)) 
+        
+        grad_v_input_pos = np.dot( (self.sigmoid(logits_out) - t), rows)
+        pass
 
-def calculate_loss(u,ctx):
-    
-    sum_1 = 0
-    for index in np.where(ctx==1)[0]:
-        sum_1 = sum_1 + u[index]
-    
-    sum_1 = -sum_1
-    sum_2 = len(np.where(ctx==1)[0]) * np.log(np.sum(np.exp(u)))
-    
-    total_loss = sum_1 + sum_2
-    return total_loss
-# ----------------------------------------------------------------------
+    def backwards_alternative(self, logits, neg_ind, h, cxt):
+        c_pos = np.dot(self.v_output, cxt)
+        W_neg = self.v_output[:, neg_ind]
+        grad_v_input = (self.sigmoid( np.dot(logits, cxt)) - 1) * c_pos
+        neg_logits = logits[neg_ind]
+        for u, c_neg in zip(W_neg.T, neg_logits):
+            grad_v_input_neg = self.sigmoid(u) * c_neg
+            grad_v_input+= grad_v_input_neg
+
+        cxt_ind = np.argmax(cxt)
+        weigths_in = self.v_input[cxt_ind]
+        new_weights_in = weigths_in - (self.learning_rate * grad_v_input)
+        self.v_input[cxt_ind] = new_weights_in    
 
 def train_skip_gram():
     text = get_file_data(stop_word_removal='yes')
@@ -181,12 +164,17 @@ def train_negative_sampling():
     sample = random.sample(training_data, k=1)[0]
 
     print(f"vocabulary size: {vocab_size}")
-    print(f"number of ")
-    x, c_pos = sample
-    negatives = net.sample_neg(noisy_dist)
-    h, c_output = net.forward(x)
-    h
-    c_output
+    print(f"number of negative samples {net.neg_sample_num}")
+    print(f"hidden vector size {net.hidden_size}")
+
+    x, cxt = sample
+    neg_indicies = net.sample_neg(noisy_dist)
+    logits, h = net.forward(x)
+    # c_neg = c_output[neg_indicies]
+    
+    # pos = np.dot(cxt, c_output)
+    net.backwards_alternative(logits, neg_indicies, h, cxt)
+    pass
 
 if __name__ == "__main__":
     train_negative_sampling()
