@@ -60,7 +60,17 @@ class SkipGramNegativeSampling:
         return c_output, h
     
     def sigmoid(self, x):
-        return 1 + (1 + np.exp(-x))
+        sig = np.zeros_like(x, dtype=float)
+        
+        pos_mask = (x >= 0)
+        neg_mask = ~pos_mask
+        
+        sig[pos_mask] = 1 / (1 + np.exp(-x[pos_mask]))
+        
+        exp_x_neg = np.exp(x[neg_mask])
+        sig[neg_mask] = exp_x_neg / (1 + exp_x_neg)
+        
+        return sig
 
     def get_unigram_dist(self, occurrences, corpus_length):
         vocab_size = len(occurrences)
@@ -95,22 +105,40 @@ class SkipGramNegativeSampling:
         grad_v_input_pos = np.dot( (self.sigmoid(logits_out) - t), rows)
         pass
 
-    def backwards_alternative(self, logits, neg_ind, h, cxt):
+    def backwards_alternative(self, center_word_idx, logits, neg_ind, h, cxt):
+        # updating v_input
         c_pos = np.dot(self.v_output, cxt)
         W_neg = self.v_output[:, neg_ind]
         grad_v_input = (self.sigmoid( np.dot(logits, cxt)) - 1) * c_pos
         neg_logits = logits[neg_ind]
-        for u, c_neg in zip(W_neg.T, neg_logits):
+        for c_neg, u in zip(W_neg.T, neg_logits):
             grad_v_input_neg = self.sigmoid(u) * c_neg
             grad_v_input+= grad_v_input_neg
-
+        # the index of the positive word
         cxt_ind = np.argmax(cxt)
-        weigths_in = self.v_input[cxt_ind]
+        # change the weights of the v_input matrix
+        weigths_in = self.v_input[center_word_idx]
         new_weights_in = weigths_in - (self.learning_rate * grad_v_input)
-        self.v_input[cxt_ind] = new_weights_in    
+        self.v_input[center_word_idx] = new_weights_in
+        # updating v_output
+        grad_v_output_pos = (self.sigmoid( np.dot(logits, cxt) - 1 )) * h 
+        weights_out_pos = self.v_output[:, cxt_ind]
+        new_weights_out_pos = weights_out_pos - (self.learning_rate * grad_v_output_pos)  
+        self.v_output[:, cxt_ind] = new_weights_out_pos
+        for i, tuple in  enumerate(zip(W_neg.T, neg_logits)):
+            c_neg, u = tuple
+            index = neg_ind[i]
+            grad_v_output_neg = (self.sigmoid(u)) * h  
+            weights_out_neg = self.v_output[:, index]
+            new_weights_out_neg = weights_out_neg - (self.learning_rate * grad_v_output_neg)
+            self.v_output[:, index] = new_weights_out_neg 
 
-def train_skip_gram():
-    text = get_file_data(stop_word_removal='yes')
+    def loss(self, logits, neg_ind, cxt):
+        cxt_ind = np.argmax(cxt)
+        negative_part = self.sigmoid(-logits[neg_ind])
+        return - np.log(self.sigmoid(logits[cxt_ind])) - np.sum( np.log(negative_part) )
+    
+def train_skip_gram(text, epochs=500):
     
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     window_size = 2
@@ -124,7 +152,6 @@ def train_skip_gram():
     epoch_losses = []
     avg_losses = []
     cumulative_avg = []
-    epochs = 500
     for epoch in range(epochs):
         # randomize the order of the samples
         # np.random.shuffle(training_data)
@@ -151,8 +178,8 @@ def train_skip_gram():
     plt.plot(x, cumulative_avg, color="b")
     plt.show()
 
-def train_negative_sampling():    
-    text = ['Best way to success is through hardwork and persistence persistence persistence persistence']
+def train_negative_sampling(epochs=500):    
+    text = ['Best way to is hardwork and persistence persistence persistence']
 
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     window_size = 2
@@ -160,22 +187,34 @@ def train_negative_sampling():
 
     net = SkipGramNegativeSampling(vocab_size, 5, 4, 0.01)
     noisy_dist = net.get_noisy_dist(occurrences, length_of_corpus)
-
-    sample = random.sample(training_data, k=1)[0]
-
     print(f"vocabulary size: {vocab_size}")
     print(f"number of negative samples {net.neg_sample_num}")
     print(f"hidden vector size {net.hidden_size}")
 
-    x, cxt = sample
-    neg_indicies = net.sample_neg(noisy_dist)
-    logits, h = net.forward(x)
-    # c_neg = c_output[neg_indicies]
-    
-    # pos = np.dot(cxt, c_output)
-    net.backwards_alternative(logits, neg_indicies, h, cxt)
-    pass
+    epoch = 0
+    running_losses = []
+    epoch_losses = []
+    for epoch in range(epochs):
+        for sample in training_data:
+            x, cxt = sample
+            center_idx = np.argmax(x)
+            neg_indicies = net.sample_neg(noisy_dist)
+            logits, h = net.forward(x)
+            # c_neg = c_output[neg_indicies]
+            
+            # pos = np.dot(cxt, c_output)
+            net.backwards_alternative(logits, center_idx, neg_indicies, h, cxt)
+            loss = net.loss(logits, neg_indicies, cxt)
+            epoch_losses.append(loss)
+        running_losses.append(np.average(epoch_losses))
+        epoch_losses = []
+        print(f"epoch: {epoch}, loss: {loss}")
+        epoch +=1
 
+    x = list(range(len(running_losses)))
+    plt.plot(x, running_losses, color="r")
+    plt.show()
+    
 if __name__ == "__main__":
     train_negative_sampling()
     # text = ['Best way to success is through hardwork and persistence']
