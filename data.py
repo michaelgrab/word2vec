@@ -92,16 +92,18 @@ def generate_samples(trgt_word, cxt_word, vocab_size, word_to_index):
 
 #Note : Below comments for trgt_word_index, ctxt_word_index are with the above sample text for understanding the code flow
 
-def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,sample=None):
+def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,sample=None, single_positive_cxt = True):
 
     training_data =  []
     training_sample_words =  []
+    occurrences = np.zeros(vocab_size)
     for i,word in enumerate(corpus):
         print(f"loading word {i}")
 
         index_target_word = i
         target_word = word
         context_words = []
+        occurrences[word_to_index.get(word)] += 1
 
         #when target word is the first word
         if i == 0:  
@@ -131,18 +133,19 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
                 if x < len(corpus):
                     context_words.extend([corpus[x]])
 
-        if MULTI_ONE_VEC:
+        if single_positive_cxt:
             samples = generate_samples(trgt_word=target_word,
                 cxt_word=context_words, vocab_size=vocab_size, word_to_index=word_to_index)
             training_data.extend(samples)   
         else:
             trgt_word_vector,ctxt_word_vector = get_one_hot_vectors(target_word,context_words,vocab_size,word_to_index)
+            sample = trgt_word_vector, ctxt_word_vector
             training_data.append(sample)
         
         if sample is not None:
             training_sample_words.append([target_word,context_words])   
         
-    return training_data,training_sample_words
+    return training_data,training_sample_words,occurrences
 
 def get_cxt_word_columns(cxt_word_vector: np.ndarray):
     columns = []
@@ -153,7 +156,8 @@ def get_cxt_word_columns(cxt_word_vector: np.ndarray):
         v = np.zeros_like(cxt_word_vector)
         v[i] = 1
         columns.append(v)
-    return columns    
+    return columns
+
 
 
 if(__name__ == "__main__"):
@@ -169,7 +173,7 @@ if(__name__ == "__main__"):
     print('Length of corpus :',length_of_corpus)
 
     window_size = 2
-    training_data,training_sample_words = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'yes')
+    training_data,training_sample_words,_ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'yes')
 
     # for i in range( 3 ):
     #     print('*' * 50)

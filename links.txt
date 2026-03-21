@@ -17,9 +17,6 @@ https://towardsdatascience.com/nlp-illustrated-part-3-word2vec-5b2e12b6a63b/
 Softmax gradient derivation
 https://github.com/ivanyschen/notes/blob/master/softmax_gradient.pdf
 
-Skip-Gram Negative Sampling Theory
-https://medium.com/@tnodecode/word2vec-negative-sampling-63995b13464f
-
 Logistic and Softmax Regression
 https://medium.com/@akshat.dev/understanding-logistic-and-softmax-regression-with-numpy-concepts-and-implementation-from-scratch-7e30a550b54c
 
@@ -35,11 +32,28 @@ http://ufldl.stanford.edu/tutorial/supervised/SoftmaxRegression/
 
 https://medium.com/@arjunprakash027/building-softmax-regression-from-scratch-a-hands-on-guide-with-python-code-5615166c9d4c
 
+
+SKIP GRAM
+Best explanation
+https://aegis4048.github.io/demystifying_neural_network_in_skip_gram_language_modeling
+
 Skip gram mathematical derivation
 https://mccormickml.com/assets/word2vec/Alex_Minnaar_Word2Vec_Tutorial_Part_I_The_Skip-Gram_Model.pdf
+**************************************
+NEGATIVE SAMPLING
 
-negative sampling
+Best explanation
+https://aegis4048.github.io/optimize_computational_efficiency_of_skip-gram_with_negative_sampling
 https://www.geeksforgeeks.org/nlp/negaitve-sampling-using-word2vec/
+
+Skip-Gram Negative Sampling Theory
+https://medium.com/@tnodecode/word2vec-negative-sampling-63995b13464f
+
+Some discussion
+https://stackoverflow.com/questions/49745192/correct-gradients-for-word2vec-negative-sampling-skip-gram-model
+
+More theory
+https://mccormickml.com/2017/01/11/word2vec-tutorial-part-2-negative-sampling/
 
 CURRENTLY READING
 https://medium.com/data-science/a-word2vec-implementation-using-numpy-and-python-d256cf0e5f28
