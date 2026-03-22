@@ -1,4 +1,5 @@
-from network import train_skip_gram, train_negative_sampling
+from skip_gram import train_skip_gram
+from negative_sampling import train_negative_sampling
 from data import get_file_data
 from data import generate_training_data, generate_dictionary_data, get_file_data
 
