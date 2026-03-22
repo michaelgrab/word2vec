@@ -4,6 +4,9 @@ from data import generate_training_data, generate_dictionary_data
 from data import get_file_data
 import random
 
+import kagglehub
+import os
+
 # useful for evaluating model quality
 def get_most_similar(word, net, word_to_index, index_to_word, top_n=5):
     if word not in word_to_index:
@@ -41,8 +44,11 @@ def get_most_similar(word, net, word_to_index, index_to_word, top_n=5):
     return results[:top_n]
 
 if __name__ == "__main__":
-    text = get_file_data(stop_word_removal='yes')
     # text = ['Best way to is hardwork and persistence persistence persistence']
+    path = kagglehub.dataset_download("muhammedfathi/game-of-thrones-book-files")
+    files = os.listdir(path)
+    print(files)
+    text = get_file_data(stop_word_removal='yes', filepath=os.path.join(path, files[0]))
 
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     window_size = 2

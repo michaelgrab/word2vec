@@ -98,7 +98,7 @@ def train_skip_gram(training_data, vocab_size, epochs=500, print_freq=5, plot_ch
     return net
 
 if __name__ == "__main__":
-    text = get_file_data(stop_word_removal='yes')
+    text = get_file_data(stop_word_removal='yes', filepath="dataset/got1.txt", max_lines=100)
     # text = ['Best way to is hardwork and persistence persistence persistence']
 
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)

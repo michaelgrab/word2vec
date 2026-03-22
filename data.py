@@ -12,7 +12,7 @@ stop_words = set(stopwords.words('english'))
 # otherwise it will be usual single 1 per vector
 MULTI_ONE_VEC = True
 
-def get_file_data(stop_word_removal='no', filepath='dataset/jef_archer.txt'):
+def get_file_data(stop_word_removal='no', filepath='dataset/jef_archer.txt', max_lines=100):
     file_contents = []
     with open(filepath) as f:
         file_contents = f.read()
@@ -29,6 +29,8 @@ def get_file_data(stop_word_removal='no', filepath='dataset/jef_archer.txt'):
                 if len(words) > 1 :
                     line = line + ' ' + words
         text.append(line)
+        if len(text) > max_lines:
+            break
     return text
 
 def generate_dictionary_data(text):
