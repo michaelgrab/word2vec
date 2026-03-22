@@ -44,6 +44,7 @@ NEGATIVE SAMPLING
 
 Best explanation
 https://aegis4048.github.io/optimize_computational_efficiency_of_skip-gram_with_negative_sampling
+
 https://www.geeksforgeeks.org/nlp/negaitve-sampling-using-word2vec/
 
 Skip-Gram Negative Sampling Theory

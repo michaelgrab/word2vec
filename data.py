@@ -98,7 +98,7 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
     training_sample_words =  []
     occurrences = np.zeros(vocab_size)
     for i,word in enumerate(corpus):
-        print(f"loading word {i}")
+        # print(f"loading word {i}")
 
         index_target_word = i
         target_word = word
