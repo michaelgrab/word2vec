@@ -3,6 +3,8 @@ import random
 import matplotlib.pyplot as plt
 import time
 
+from data import generate_training_data, generate_dictionary_data
+
 class SkipGramNetwork:
     def __init__(self, input_size: int, hidden_size: int, learning_rate: float=0.01):
         self.weights1 = np.random.uniform(-0.5, 0.5, size=(input_size, hidden_size))
@@ -90,3 +92,13 @@ def train_skip_gram(training_data, vocab_size, epochs=500, print_freq=5):
     plt.xlabel("training epochs")
     plt.title("Training loss Skip-Gram")
     plt.show()
+
+if __name__ == "__main__":
+
+    text = ['Best way to is hardwork and persistence persistence persistence']
+
+    word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
+    window_size = 2
+
+    training_data,_,_ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_positive_cxt=False)
+    train_skip_gram(training_data, vocab_size, epochs=100)

@@ -3,6 +3,8 @@ import random
 import matplotlib.pyplot as plt
 import time
 
+from data import generate_training_data, generate_dictionary_data
+
 class NegativeSamplingNetwork:
     def __init__(self, vocab_size, hidden_size, K, learning_rate, alpha=3/4):
         """
@@ -145,6 +147,10 @@ def train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_
     plt.show()
     
 if __name__ == "__main__":
-    train_negative_sampling()
-    # text = ['Best way to success is through hardwork and persistence']
-    # text = get_file_data(stop_word_removal='yes', filepath='dataset/text8.txt')
+    text = ['Best way to is hardwork and persistence persistence persistence']
+
+    word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
+    window_size = 2
+
+    training_data,_, occurrences = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_positive_cxt=True)
+    train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_size, epochs=50)
