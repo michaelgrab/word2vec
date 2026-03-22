@@ -1,6 +1,12 @@
 # Word2Vec implementation in pure Numpy
+
 Two variants of skip-gram
+
 softmax skip-gram and sigmoid skip-gram with negative sampling
+
+softmax skip-gram training loop can be found in skip_gram.py
+negative sampling training loop can be found in negative_sampling.py
+
 ---
 ## how to run this project?
 ```bash

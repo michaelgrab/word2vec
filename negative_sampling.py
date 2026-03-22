@@ -16,6 +16,7 @@ class NegativeSamplingNetwork:
         self.learning_rate = learning_rate
         self.alpha = alpha
         self.hidden_size = hidden_size
+        self.vocab_size = vocab_size
 
     def forward(self, x):
         """
@@ -101,7 +102,7 @@ class NegativeSamplingNetwork:
         negative_part = self.sigmoid(-logits[neg_ind])
         return - np.log(self.sigmoid(logits[cxt_ind])) - np.sum( np.log(negative_part) )
 
-def train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_size, epochs=500, print_freq=5):    
+def train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_size, epochs=500, print_freq=5, plot_chart=True, print_log=True):    
     """
         print_freq: print epoch loss every x epochs 
     """
@@ -132,19 +133,22 @@ def train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_
             epoch_losses.append(loss)
         running_losses.append(np.average(epoch_losses))
         epoch_losses = []
-        if epoch % print_freq == 0:
+        if epoch % print_freq == 0 and print_log == True:
             print(f"epoch: {epoch}, loss: {loss}")
         epoch +=1
     end_time = time.time()    
     print("*" * 20)
     print(f"training time {end_time - start_time}")
     print("*" * 20)
-    x = list(range(len(running_losses)))
-    plt.plot(x, running_losses, color="r")
-    plt.title("Skip gram with negative sampling training loss")
-    plt.xlabel("training epochs")
-    plt.ylabel("aeverage epoch loss")
-    plt.show()
+    if plot_chart == True:
+        x = list(range(len(running_losses)))
+        plt.plot(x, running_losses, color="r")
+        plt.title("Skip gram with negative sampling training loss")
+        plt.xlabel("training epochs")
+        plt.ylabel("aeverage epoch loss")
+        plt.show()
+
+    return net    
     
 if __name__ == "__main__":
     text = ['Best way to is hardwork and persistence persistence persistence']

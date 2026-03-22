@@ -105,7 +105,7 @@ if __name__ == "__main__":
     window_size = 2
 
     training_data,sample_words, _ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'yes', single_context=False)
-    net = train_skip_gram(training_data, vocab_size, epochs=150, plot_chart=False, print_log=True)
+    net = train_skip_gram(training_data, vocab_size, epochs=400, plot_chart=False, print_log=True)
 
     # demonstration
     demo_words = 30
@@ -125,4 +125,5 @@ if __name__ == "__main__":
         print("predicted words:")
         for j in range(demo_words):
             pred_word = index_to_word.get(top_pred_indices[j])
-            print("   ", j, " ", pred_word)            
+            print("   ", j, " ", pred_word)  
+                
