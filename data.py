@@ -92,8 +92,18 @@ def generate_samples(trgt_word, cxt_word, vocab_size, word_to_index):
 
 #Note : Below comments for trgt_word_index, ctxt_word_index are with the above sample text for understanding the code flow
 
-def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,sample=None, single_positive_cxt = True):
-
+def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,sample=None, single_context = True):
+    """
+        returns:
+            training data
+                pairs of one hot encoded center word and multi hot encoded context words
+                or
+                pairs of one hot encoded center word and one hot encoded context word
+            training sample words
+                list of pairs of center word and list of context words
+            occurences
+                array where each index corresponds to the number the word occurres in the corpus    
+    """
     training_data =  []
     training_sample_words =  []
     occurrences = np.zeros(vocab_size)
@@ -133,7 +143,7 @@ def generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of
                 if x < len(corpus):
                     context_words.extend([corpus[x]])
 
-        if single_positive_cxt:
+        if single_context:
             samples = generate_samples(trgt_word=target_word,
                 cxt_word=context_words, vocab_size=vocab_size, word_to_index=word_to_index)
             training_data.extend(samples)   

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import time
 
 from data import generate_training_data, generate_dictionary_data
+from data import get_file_data
+from data import one_hot_vector
 
 class SkipGramNetwork:
     def __init__(self, input_size: int, hidden_size: int, learning_rate: float=0.01):
@@ -43,7 +45,7 @@ class SkipGramNetwork:
         self.weights1 = self.weights1 - (self.learning_rate * gradient1)
         self.weights2 = self.weights2 - (self.learning_rate * gradient2) 
 
-def train_skip_gram(training_data, vocab_size, epochs=500, print_freq=5):
+def train_skip_gram(training_data, vocab_size, epochs=500, print_freq=5, plot_chart=True, print_log=True):
     """
         print_freq: print epoch loss every x epochs 
     """    
@@ -77,7 +79,7 @@ def train_skip_gram(training_data, vocab_size, epochs=500, print_freq=5):
         avg_losses.append( np.average(epoch_losses) )
         cumulative_avg.append( np.average( losses ) )
         epoch_losses = []
-        if epoch % print_freq == 0:
+        if epoch % print_freq == 0 and print_log:
             print(f"epoch: {epoch}, loss: {loss}")
         epoch +=1
     end_time = time.time()    
@@ -87,18 +89,40 @@ def train_skip_gram(training_data, vocab_size, epochs=500, print_freq=5):
     x = list(range(len(avg_losses)))
     # y = losses
     # plt.scatter(x, y, marker=".")
-    plt.plot(x, avg_losses, color="r", label="running average")
-    plt.plot(x, cumulative_avg, color="b", label="cumulative average")
-    plt.xlabel("training epochs")
-    plt.title("Training loss Skip-Gram")
-    plt.show()
+    if plot_chart:
+        plt.plot(x, avg_losses, color="r", label="running average")
+        plt.plot(x, cumulative_avg, color="b", label="cumulative average")
+        plt.xlabel("training epochs")
+        plt.title("Training loss Skip-Gram")
+        plt.show()
+    return net
 
 if __name__ == "__main__":
-
-    text = ['Best way to is hardwork and persistence persistence persistence']
+    text = get_file_data(stop_word_removal='yes')
+    # text = ['Best way to is hardwork and persistence persistence persistence']
 
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     window_size = 2
 
-    training_data,_,_ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_positive_cxt=False)
-    train_skip_gram(training_data, vocab_size, epochs=100)
+    training_data,sample_words, _ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'yes', single_context=False)
+    net = train_skip_gram(training_data, vocab_size, epochs=150, plot_chart=False, print_log=True)
+
+    # demonstration
+    demo_words = 30
+    for i in range(3):
+        word, context_words = random.sample(sample_words, k=1)[0]
+        print(f"example {i}")
+        print("word: ", word)
+        print("context words:")
+        for i, word in enumerate(context_words):
+            print("   ", i, " ", word)
+        word_idx = word_to_index.get(word)
+        n = len(context_words)
+        word_vector = one_hot_vector(word, vocab_size, word_to_index)
+        prob, h, _ = net.forward(word_vector)
+        # top_pred_index = np.argmax(prob)
+        top_pred_indices = np.argsort(prob)[:demo_words]
+        print("predicted words:")
+        for j in range(demo_words):
+            pred_word = index_to_word.get(top_pred_indices[j])
+            print("   ", j, " ", pred_word)            

@@ -152,5 +152,5 @@ if __name__ == "__main__":
     word_to_index,index_to_word,corpus,vocab_size,length_of_corpus = generate_dictionary_data(text)
     window_size = 2
 
-    training_data,_, occurrences = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_positive_cxt=True)
-    train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_size, epochs=50)
+    training_data,_, occurrences = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_context=True)
+    train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_size, epochs=200)

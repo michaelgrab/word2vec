@@ -11,11 +11,11 @@ def main():
 
     # training of the skip gram model
     # display line chart at the end
-    training_data,_,_ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_positive_cxt=False)
+    training_data,_,_ = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_context=False)
     train_skip_gram(training_data, vocab_size, epochs=100)
 
     # train skip gram with negative sampling
-    training_data,_, occurrences = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_positive_cxt=True)
+    training_data,_, occurrences = generate_training_data(corpus,window_size,vocab_size,word_to_index,length_of_corpus,'no', single_context=True)
     train_negative_sampling(training_data, occurrences, length_of_corpus, vocab_size, epochs=50)
 
 if __name__ == "__main__":
